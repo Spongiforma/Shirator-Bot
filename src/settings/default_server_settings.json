@@ -1,0 +1,14 @@
+{
+  "settings": ["prefix","admin_role","disabled_prefixes"],
+  "prefix":"::",
+  "admin_role": "admin",
+  "disabled_prefixes":[],
+  "queue": [],
+  "connection": null,
+  "robot9000": {
+    "messages" : {},
+    "mute_users": {},
+    "mute_role": "",
+    "admin_exempt": true
+  }
+}

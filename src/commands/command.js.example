@@ -1,0 +1,11 @@
+module.exports = {
+    name: 'ping',
+    description: 'Ping!',
+    aliases: [],
+    min_args: 0,
+    usage: "",
+    admin_only:false,
+    execute(message,args){
+        // code
+    }
+}
