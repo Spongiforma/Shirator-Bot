@@ -26,6 +26,13 @@ for (const file of commandFiles){
 
 client.once('ready', () => {
 	console.log('Shirator is online!');
+	client.user.setPresence({
+		activity:{
+			name: 'Type ::help for a great good',
+			type: 'LISTENING',
+			url: 'https://github.com/Spongiforma/Shirator-Discord-Bot'
+		}
+	});
 });
 
 client.on("guildDelete",guild =>{
