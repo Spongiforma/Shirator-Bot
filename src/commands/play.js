@@ -36,7 +36,11 @@ module.exports = {
 			if (!queue.get(message.guild.id) || queue.get(message.guild.id).songs.length === 0){
 				return message.reply("Queue is empty");
 			}
-			message.reply(`loop = ${queue.get(message.guild.id).loop}\n` + queue.get(message.guild.id).songs.join('\n'));
+			message.reply(`circle = ${queue.get(message.guild.id).circle}\n`+
+			`work = ${queue.get(message.guild.id).work}\n`+
+			`loop = ${queue.get(message.guild.id).loop}\n`+
+				queue.get(message.guild.id).songs.join('\n'));
+
 		} else if (args[0] === 'skip'){
 			if (!queue.get(message.guild.id).songs[0])
 				return message.reply('I\'m not playing anything now');
@@ -69,7 +73,7 @@ module.exports = {
 			} else
 				num = 5;
 			const circle = args[1], work = args[2];
-			play_from_folders(message,num,queue,sound_dir + "voice/" + circle + '/' + work + '/',args[3] === 'loop' || args[4] === 'loop');
+			play_from_folders(message,num,queue,sound_dir + "voice/" + circle + '/' + work + '/',circle,work,args[3] === 'loop' || args[4] === 'loop');
 		}  else if (args[0] === 'cat'){
 			return message.reply("https://spongiforma.github.io/Shirator-Discord-Bot/res/catalogue/site/Shirator-Listing.htm");
 		} else if (args[0] === 'key'){
@@ -89,24 +93,26 @@ module.exports = {
 				.on('end',() =>{
 					if (key >= res.length)
 						return message.reply('Invalid key');
-					play_from_folders(message,num,queue,sound_dir+res[key].dir,args[2]==='loop' || args[3]==='loop');
+					play_from_folders(message,num,queue,sound_dir+res[key].dir,res[key].circle,res[key].code+' '+res[key].title, args[2]==='loop' || args[3]==='loop');
 				});
 		}
 	}
 }
 
-function play_from_folders(message,num,queue,dir,loop = false){
+function play_from_folders(message,num,queue,dir,circle,work,loop = false){
 	const queueConstruct = {
 		textChannel: message.channel,
 		voiceChannel: message.member.voice.channel,
 		connection: null,
 		songs: [],
 		playing: true,
-		loop: loop
+		loop: loop,
+		circle: circle,
+		work: work,
 	};
 	message.member.voice.channel.join().then(connection => {
 		queue.set(message.guild.id,queueConstruct);
-		const soundFiles = fs.readdirSync(dir).filter(e => e.endsWith(".wav"));
+		const soundFiles = fs.readdirSync(dir).filter(e => e.endsWith(".wav") || e.endsWith('.mp3') || e.endsWith('.flac') || e.endsWith('.ogg'));
 		if (!soundFiles){
 			return message.reply("File(s) not found");
 		}
