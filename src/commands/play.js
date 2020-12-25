@@ -3,7 +3,7 @@ const emoji = require('../settings/embed.js');
 const csv = require('csv-parser');
 const stripBom= require('strip-bom-stream');
 const sound_dir = "../res/sound/";
-const catalogue_csv_dir  = "../res/catalogue/catalogue.csv";
+const catalogue_csv_dir  = "./data/catalogue.csv";
 
 module.exports = {
 	name: 'play',

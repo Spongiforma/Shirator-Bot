@@ -112,4 +112,5 @@ res/sound/
 src/settings/config.json
 # other
 src/robot9000/
-src/data/
+src/data/enmap*
+*.sqlite*
