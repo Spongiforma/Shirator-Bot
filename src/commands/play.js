@@ -1,6 +1,9 @@
 const fs = require("fs");
-const sound_dir = "../res/sound/";
 const emoji = require('../settings/embed.js');
+const csv = require('csv-parser');
+const stripBom= require('strip-bom-stream');
+const sound_dir = "../res/sound/";
+const catalogue_csv_dir  = "../res/catalogue/catalogue.csv";
 
 module.exports = {
 	name: 'play',
@@ -18,18 +21,18 @@ module.exports = {
 		message.client.settings.set(message.guild.id,[],"queue");
 		if (args[0] === 'random') {
 			return message.reply("WIP");
-			let num = 5;
-			if(args[1])	{
-				num = parseInt(args[1]);
-			}
-			if(isNaN(num) || num <= 0){
-				return message.reply('Invalid number');
-			}
-			const circles = fs.readdirSync(sound_dir);
-			shuffle(circles);
-			const playlists = fs.readdirSync(sound_dir + circles[0] + '/');
-			shuffle(playlists);
-			play_from_folders(message,num,queue,sound_dir + circles[0] + '/' + playlists[0] + '/');
+			// let num = 5;
+			// if(args[1])	{
+			// 	num = parseInt(args[1]);
+			// }
+			// if(isNaN(num) || num <= 0){
+			// 	return message.reply('Invalid number');
+			// }
+			// const circles = fs.readdirSync(sound_dir);
+			// shuffle(circles);
+			// const playlists = fs.readdirSync(sound_dir + circles[0] + '/');
+			// shuffle(playlists);
+			// play_from_folders(message,num,queue,sound_dir + circles[0] + '/' + playlists[0] + '/');
 		} else if (args[0] === 'curr'){
 			if (!queue.get(message.guild.id) || queue.get(message.guild.id).songs.length === 0){
 				return message.reply("Queue is empty");
@@ -72,22 +75,30 @@ module.exports = {
 			} else
 				num = 5;
 			const circle = args[1], work = args[2];
-
-			play_from_folders(message,num,queue,sound_dir + circle + '/' + work + '/',args[3] === 'loop' || args[4] === 'loop');
-
-		} else if (args[0] === 'print'){
-			if(args[1] === 'circles'){
-				print_files(sound_dir,message);
-			}
-		} else if (args[0] === 'cat'){
+			play_from_folders(message,num,queue,sound_dir + "voice/" + circle + '/' + work + '/',args[3] === 'loop' || args[4] === 'loop');
+		}  else if (args[0] === 'cat'){
 			return message.reply("WIP");
+		} else if (args[0] === 'key'){
+			if(!args[1])
+				return message.reply('Missing key');
+			if(isNaN(parseInt(args[1])))
+				return message.reply('Invalid key');
+			const key = parseInt(args[1]);
+			if (key < 0)
+				return message.reply('invalid key');
+			const res = [];
+			fs.createReadStream(catalogue_csv_dir)
+				.pipe(stripBom())
+				.pipe(csv())
+				.on('data',(data) => res.push(data))
+				.on('end',() =>{
+					if (key >= res.length)
+						return message.reply('Invalid key');
+					play_from_folders(message,-1,queue,sound_dir+res[key].dir,args[2]==='loop' || args[3]==='loop');
+				});
 		}
 	}
 }
-function print_files(folder_name,message){
-	return message.reply(fs.readdirSync(folder_name));
-}
-
 
 function play_from_folders(message,num,queue,dir,loop = false){
 	const queueConstruct = {
@@ -139,6 +150,10 @@ function play(connection, message, queue, dir,loop = false, original_queue = [])
 				connection.disconnect();
 		}
 	});
+}
+function read_csv_to_array(){
+
+
 }
 
 function shuffle(array) {
