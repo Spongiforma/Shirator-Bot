@@ -22,7 +22,7 @@ return thing xml:
     <td class="right">104M</td>
     <td class="right">Me</td>
     <td class="right">R1234</td>
-    <td class="content" title="Download with: &ltprefix&gt :play xdcc send ${num}"><a href="#" onclick="prompt('Paste into discord:','/msg KasumiBot XDCC SEND 1')">My neighbour is a vampiric 800 year old loli?</a></td>
+    <td class="content" title="Download with: &ltprefix&gt ::play key ${num}"><a href="#" onclick="prompt('Paste into discord:','::play key ${num}')">My neighbour is a vampiric 800 year old loli?</a></td>
 </tr>
 |#
 
@@ -101,7 +101,7 @@ return thing xml:
 <td class=\"right\">~A</td>
 <td class=\"right\">~A</td>
 <td class=\"right\">~A</td>
-<td class=\"content\" title=\"Stream with !play key ~A\"><a href=\"#\" onclick=\"prompt('Paste into discord:','!play key ~A')\">~A</a></td>
+<td class=\"content\" title=\"Stream with ::play key ~A\"><a href=\"#\" onclick=\"prompt('Paste into discord:','::play key ~A')\">~A</a></td>
 </tr>~%"
                                num (caar args) (caadr args) (caaddr args)
                                num num (car (cadddr args)))

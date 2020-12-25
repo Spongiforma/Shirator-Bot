@@ -40,8 +40,11 @@ client.on("guildDelete",guild =>{
 })
 
 client.on('message', message => {
+	if(message.channel.type === 'dm'){
+		return;
+	}
 	client.settings.ensure(message.guild.id,default_settings);
-	const {prefix,admin_role} = client.settings.get(message.guild.id);
+	let {prefix,admin_role} = client.settings.get(message.guild.id);
 
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
 	const commandName = args.shift().toLowerCase();

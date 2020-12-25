@@ -2,17 +2,17 @@ const fs = require("fs");
 const emoji = require('../settings/embed.js');
 const csv = require('csv-parser');
 const stripBom= require('strip-bom-stream');
-const sound_dir = "../res/sound/";
+const sound_dir = "../sound/";
 const catalogue_csv_dir  = "./data/catalogue.csv";
 
 module.exports = {
 	name: 'play',
 	description: 'Streams H-voice. Hosts 20GB (Will be 120GB in near future) of H-voice sorted by circles. \n' +
 		'May contain nsfw content but some stuff is pretty tame e.g. > \n' +
-		'Try \`::play circle momoiro-code RJ141480 loop\` or \`::play key 8\`\n',
+		'Try \`::play key 8\` to play Momoiro-code\'s [RJ141480]【田舎耳かき】道草屋芹-ご連泊【ソルフェジオ音源】\n',
 	aliases: [],
 	min_args: 0,
-	usage: "[random <<num=5>>] [curr] [cat(alogue)] [skip] [circle <<name>> <<code>> <<num=(all files)>> <<loop=false>>]",
+	usage: "[curr(ently playing)] [cat(alogue)] [skip <<num=1>>] [circle <<name>> <<title>> <<num=(all files)>> <<loop=false>>] [key <<key>> <<num=(all files)>> <<loop=false>>]",
 	admin_only:false,
 	execute(message,args,queue){
 		if(!message.member.voice.channel)
@@ -36,7 +36,7 @@ module.exports = {
 			if (!queue.get(message.guild.id) || queue.get(message.guild.id).songs.length === 0){
 				return message.reply("Queue is empty");
 			}
-			message.reply(queue.get(message.guild.id).songs);
+			message.reply(`loop = ${queue.get(message.guild.id).loop}\n` + queue.get(message.guild.id).songs.join('\n'));
 		} else if (args[0] === 'skip'){
 			if (!queue.get(message.guild.id).songs[0])
 				return message.reply('I\'m not playing anything now');
@@ -47,12 +47,9 @@ module.exports = {
 					return message.reply('Invalid number');
 			}
 			num = Math.min(num,queue.get(message.guild.id).songs.length);
-			const skipped = [];
-			for (let i = 0; i < num; ++i)
-				skipped.push(queue.get(message.guild.id).songs[i]);
+			message.reply(`Skipped:\n${queue.get(message.guild.id).songs.slice(0,num).join('\n')}`);
 			for(let i = 0; i < num-1;++i)
 				queue.get(message.guild.id).songs.shift();
-			message.reply(`Skipped ${skipped}`);
 			queue.get(message.guild.id).connection.dispatcher.end();
 		} else if (args[0] === 'circle'){
 			if (!args[1]){
@@ -76,11 +73,12 @@ module.exports = {
 		}  else if (args[0] === 'cat'){
 			return message.reply("https://spongiforma.github.io/Shirator-Discord-Bot/res/catalogue/site/Shirator-Listing.htm");
 		} else if (args[0] === 'key'){
-			if(!args[1])
+			if(!args[1] || isNaN(parseInt(args[1])))
 				return message.reply('Missing key');
-			if(isNaN(parseInt(args[1])))
-				return message.reply('Invalid key');
 			const key = parseInt(args[1]);
+			let num = -1;
+			if (args[2] && !isNaN(parseInt(args[2])))
+				num = parseInt(args[2]);
 			if (key < 0)
 				return message.reply('invalid key');
 			const res = [];
@@ -91,7 +89,7 @@ module.exports = {
 				.on('end',() =>{
 					if (key >= res.length)
 						return message.reply('Invalid key');
-					play_from_folders(message,-1,queue,sound_dir+res[key].dir,args[2]==='loop' || args[3]==='loop');
+					play_from_folders(message,num,queue,sound_dir+res[key].dir,args[2]==='loop' || args[3]==='loop');
 				});
 		}
 	}
@@ -104,6 +102,7 @@ function play_from_folders(message,num,queue,dir,loop = false){
 		connection: null,
 		songs: [],
 		playing: true,
+		loop: loop
 	};
 	message.member.voice.channel.join().then(connection => {
 		queue.set(message.guild.id,queueConstruct);
@@ -143,8 +142,9 @@ function play(connection, message, queue, dir,loop = false, original_queue = [])
 					queue.push(song);
 				}
 				play(connection, message, queue, dir, loop, original_queue);
-			} else
+			} else {
 				connection.disconnect();
+			}
 		}
 	});
 }
