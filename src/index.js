@@ -28,8 +28,9 @@ client.once('ready', () => {
 	console.log('Shirator is online!');
 	client.user.setPresence({
 		activity:{
-			name: 'Type ::help for a great good',
-			type: 'LISTENING',
+			//name: 'Type ::help for a great good',
+			name: 'Headhunter - Kapo! by Death in June',
+			type: 'PLAYING',
 			url: 'https://github.com/Spongiforma/Shirator-Discord-Bot'
 		}
 	});
