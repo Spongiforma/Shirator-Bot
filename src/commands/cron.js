@@ -2,16 +2,19 @@ const CronJob = require('cron').CronJob;
 module.exports = {
     name: 'cron',
     description: 'Periodic messages',
-    aliases: ['anytimeCunny'],
+    aliases: [],
     min_args: 0,
     usage: "",
     admin_only:false,
     execute(message,args){
         if (args[0] === 'int'){
-            const job = new CronJob(args.slice(2,8).join(' '),function() {
-                message.channel.send(args[1]);
-            }, null, false, 'Asia/Singapore');
-            job.start();
+            this.run_cron_from_message(args,message.channel)
         }
+    },
+    run_cron_from_message(args,channel){
+        new CronJob(args.slice(1,7).join(' '), function(){
+            channel.send(args.slice(7).join(' '));
+        },null,false,'Asia/Singapore').start()
     }
 }
+

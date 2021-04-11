@@ -25,15 +25,25 @@ for (const file of commandFiles){
 }
 
 client.once('ready', () => {
-	console.log('Shirator is online!');
-	client.user.setPresence({
-		activity:{
-			//name: 'Type ::help for a great good',
-			name: 'Headhunter - Kapo! by Death in June',
-			type: 'PLAYING',
-			url: 'https://github.com/Spongiforma/Shirator-Discord-Bot'
-		}
-	});
+	console.log('Shirator is online');
+		client.user.setPresence({
+			activity:{
+				//name: 'Type ::help for a great good',
+				name: 'Feeding floozy /jp/ touhou posters',
+				type: 'PLAYING',
+				url: 'https://github.com/Spongiforma/Shirator-Discord-Bot'
+			}
+		})
+	setInterval(function (){
+		client.user.setPresence({
+			activity:{
+				//name: 'Type ::help for a great good',
+				name: 'Headhunter - Kapo! by Death in June',
+				type: 'PLAYING',
+				url: 'https://github.com/Spongiforma/Shirator-Discord-Bot'
+			}
+		})
+	},1000*3600*24);
 });
 
 client.on("guildDelete",guild =>{
@@ -46,7 +56,7 @@ client.on('message', message => {
 	}
 	client.settings.ensure(message.guild.id,default_settings);
 	let {prefix,admin_role} = client.settings.get(message.guild.id);
-
+	if(message.content.slice(0,prefix.length) !== prefix)return;
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
 	const commandName = args.shift().toLowerCase();
 
