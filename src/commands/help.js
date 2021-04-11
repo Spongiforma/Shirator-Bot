@@ -1,6 +1,6 @@
 module.exports = {
 	name: 'help',
-	description: 'List command info',
+	description: 'List command info. See bot source at: https://github.com/Spongiforma/Shirator-Discord-Bot',
 	aliases: ['commands'],
 	min_args: 0,
 	usage: '[command_name]',
